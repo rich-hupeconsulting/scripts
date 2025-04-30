@@ -1,0 +1,71 @@
+version: "3.9"
+services:
+
+  tautulli:
+    image: lscr.io/linuxserver/tautulli:latest
+    container_name: tautulli
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    volumes:
+      - /srv/media/config/tautulli:/config
+    ports:
+      - 8181:8181
+    restart: unless-stopped
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    volumes:
+      - /srv/media/config/sonarr:/config
+      - /media/newd/TV:/tv1
+      - /home/rich/TV:/tv2
+      - /media/newd2/newd2/TV2:/tv3
+      - /srv/media/Downloads:/downloads
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    volumes:
+      - /srv/media/config/radarr:/config
+      - /media/newd/Film:/movies1
+      - /home/rich/Films:/movies2
+      - /media/newd2/newd2/Film2:/movies3
+      - /srv/media/Downloads:/downloads
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+
+  plex-meta-manager:
+    image: meisnate12/plex-meta-manager:latest
+    container_name: plex-meta-manager
+    volumes:
+      - /srv/media/config/pmm:/config
+      - /var/lib/plexmediaserver/Library/Application Support/Plex Media Server:/plex:ro
+    environment:
+      - TZ=Europe/London
+    restart: unless-stopped
+
+  duplicateremover:
+    image: saspus/duplicacy-web:latest
+    container_name: duplicacy
+    ports:
+      - 3875:3875
+    volumes:
+      - /srv/media:/data
+      - /srv/media/config/duplicacy:/config
+    environment:
+      - TZ=Europe/London
+    restart: unless-stopped
